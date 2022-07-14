@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_price"
+            style="@style/TextMontserratBold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="@string/statistics_for_last_4_quaters"
+            android:textSize="28sp" />
+
+        <ProgressBar
+            android:id="@+id/progress"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="30dp" />
+
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/stats_chart"
+            android:layout_width="match_parent"
+            android:layout_height="300dp" />
+
+        <Button
+            android:id="@+id/btn_buy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginVertical="20dp"
+            android:backgroundTint="@color/black"
+            android:text="@string/buy" />
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Stocks</string>
+    <string name="find_company">Find company or ticker</string>
+    <string name="retry">retry</string>
+    <string name="buy">Buy</string>
+    <string name="statistics_for_last_4_quaters">Statistics for last 4 quaters</string>
+    <string name="network_back">😃 Yeay network is back</string>
+    <string name="no_network">☹ Woops!! Looks like we lost network</string>
+    <string name="p_s_all_the_news_is_provided_by_https_finnhub_io_website">P.s: All the news is provided by https://finnhub.io/ website</string>
+    <string name="p_s_all_the_stocks_is_provided_by_https_finnhub_io_website">P.s: All the news is provided by https://finnhub.io/ website</string>
+    <string name="read_more_about_news_policy">read about policy</string>
+    <string name="content_policy">Content policy</string>
+    <string name="policy_info"><![CDATA[All data comes from finnhub.io and mboum.com websites. All news in this app comes from finnhub.io free api data.\n Market data & corporate actions are sourced directly from the exchanges (ASX e.g), ActivFinancial, EDI and QuoteMedia. Fundamental data is sourced directly from companies\' filings which we make available in SEC Filings endpoint and International Filings endpoint ETFs data is sourced from Issuers\' filings and public websites.\n Mboum provides fundamental data, market data, estimates and alternative data for global stock markets. Mboum is not engaged in rendering legal, accounting, investment advising, or other professional service. Your use of the Website and of any content, information or data accessed on or through the Website is at your own risk. We do not guarantee or make any warranties about the accuracy or completeness of any content, information or data accessed on or through the Website. Some content, information or data accessed on or through the Website may be inaccurate, incomplete or unfit for a particular purpose.]]></string>
+</resources>

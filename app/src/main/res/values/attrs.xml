@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <declare-styleable name="SearchBox">
+    <!-- TODO find a better name -->
+    <attr name="isSearchActive" format="boolean" />
+  </declare-styleable>
+
+  <declare-styleable name="RoundedImageView">
+    <attr name="srcImg" format="reference|color" />
+    <attr name="radius" format="dimension" />
+  </declare-styleable>
+</resources>

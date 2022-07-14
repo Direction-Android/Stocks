@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/main_nav_graph"
+    app:startDestination="@id/mainFragment">
+
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="uz.azim.stocks.ui.fragment.main.MainFragment"
+        android:label="MainFragment" >
+        <action
+            android:id="@+id/action_mainFragment_to_searchFragment"
+            app:destination="@id/searchFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
+        <action
+            android:id="@+id/action_mainFragment_to_quoteFragment"
+            app:destination="@id/quoteFragment" >
+            <argument
+                android:name="symbol"
+                app:argType="string" />
+        </action>
+        <action
+            android:id="@+id/action_mainFragment_to_newsPolicyFragment"
+            app:destination="@id/newsPolicyFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="uz.azim.stocks.ui.fragment.search.SearchFragment"
+        android:label="SearchFragment" >
+        <action
+            android:id="@+id/action_searchFragment_to_quoteFragment"
+            app:destination="@id/quoteFragment" >
+            <argument
+                android:name="symbol"
+                app:argType="string" />
+        </action>
+    </fragment>
+    <fragment
+        android:id="@+id/quoteFragment"
+        android:name="uz.azim.stocks.ui.fragment.quote.QuoteFragment"
+        android:label="QuoteFragment" >
+        <argument
+            android:name="symbol"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/newsPolicyFragment"
+        android:name="uz.azim.stocks.ui.fragment.policy.NewsPolicyFragment"
+        android:label="NewsPolicyFragment" />
+</navigation>
