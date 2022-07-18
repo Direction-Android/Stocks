@@ -19,12 +19,15 @@ import uz.azim.stocks.ui.fragment.news.adapter.NewsAdapter
 import uz.azim.stocks.ui.fragment.quote.SYMBOL
 import uz.azim.stocks.ui.vm.NewsFragmentViewModel
 import uz.azim.stocks.util.isNull
+import uz.azim.stocks.util.vmfactories.NewsFragmentViewModelFactory
 import java.text.SimpleDateFormat
 import java.util.*
 
 class NewsFragment : BaseFragment<FragmentNewsBinding>(R.layout.fragment_news) {
     private lateinit var symbol: String
-    private val newsFragmentViewModel by viewModels<NewsFragmentViewModel>()
+    private val newsFragmentViewModel by viewModels<NewsFragmentViewModel> {
+        NewsFragmentViewModelFactory()
+    }
     private val newsAdapter: NewsAdapter = NewsAdapter()
 
     override fun initViewBinding(view: View) = FragmentNewsBinding.bind(view)
