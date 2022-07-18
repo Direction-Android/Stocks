@@ -3,6 +3,7 @@ package uz.azim.stocks.ui.fragment.search
 import android.os.Bundle
 import android.view.View
 import androidx.core.view.isVisible
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
@@ -15,12 +16,16 @@ import uz.azim.stocks.databinding.FragmentSearchBinding
 import uz.azim.stocks.di.RepositoryModule
 import uz.azim.stocks.ui.fragment.BaseFragment
 import uz.azim.stocks.ui.fragment.search.adapter.SearchAdapter
+import uz.azim.stocks.ui.vm.SearchFragmentViewModel
 import uz.azim.stocks.util.hideKeyboard
 import uz.azim.stocks.util.navigate
+import uz.azim.stocks.util.vmfactories.SearchFragmentViewModelFactory
 
 class SearchFragment : BaseFragment<FragmentSearchBinding>(R.layout.fragment_search) {
 
-    private val stocksRepository: StocksRepository = RepositoryModule.bindStockRepo()
+    private val searchFragmentViewModel by viewModels<SearchFragmentViewModel> {
+        SearchFragmentViewModelFactory()
+    }
 
     private val searchAdapter: SearchAdapter = SearchAdapter()
     private val searchText = "text"
@@ -65,7 +70,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(R.layout.fragment_sea
 
     private fun searchForStock(query: String) {
         lifecycleScope.launchWhenStarted {
-            stocksRepository.searchStock(query)
+            searchFragmentViewModel.getSearchResult(query)
                 .onStart { showProgress() }
                 .catch { hideProgress() }
                 .collect {

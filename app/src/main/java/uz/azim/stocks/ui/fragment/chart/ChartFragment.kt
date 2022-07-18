@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.core.view.isVisible
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.github.mikephil.charting.components.Description
 import com.github.mikephil.charting.components.XAxis
@@ -19,13 +20,15 @@ import uz.azim.stocks.di.RepositoryModule
 import uz.azim.stocks.model.StockStat
 import uz.azim.stocks.ui.fragment.BaseFragment
 import uz.azim.stocks.ui.fragment.quote.SYMBOL
+import uz.azim.stocks.ui.vm.ChartFragmentViewModel
 import uz.azim.stocks.util.Resource
 import uz.azim.stocks.util.getColor
 import uz.azim.stocks.util.getDrawable
 import uz.azim.stocks.util.log
+import uz.azim.stocks.util.vmfactories.ChartFragmentViewModelFactory
 
 class ChartFragment : BaseFragment<FragmentChartBinding>(R.layout.fragment_chart) {
-    private val companyRepo = RepositoryModule.bindCompanyRepo()
+    private val chartFragmentViewModel by viewModels<ChartFragmentViewModel> { ChartFragmentViewModelFactory() }
 
     private var formatter: ValueFormatter? = null
     private var symbol: String = ""
@@ -43,7 +46,7 @@ class ChartFragment : BaseFragment<FragmentChartBinding>(R.layout.fragment_chart
     private fun getStats(symbol: String) {
         showLoading()
         lifecycleScope.launchWhenStarted {
-            companyRepo.getCompanyStats(symbol)
+            chartFragmentViewModel.getCompanyStatsFlow(symbol)
                 .catch {
                     hideLoading()
                 }

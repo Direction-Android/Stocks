@@ -7,6 +7,7 @@ import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.view.isVisible
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
@@ -16,13 +17,17 @@ import uz.azim.stocks.di.RepositoryModule
 import uz.azim.stocks.ui.fragment.BaseFragment
 import uz.azim.stocks.ui.fragment.news.adapter.NewsAdapter
 import uz.azim.stocks.ui.fragment.quote.SYMBOL
+import uz.azim.stocks.ui.vm.NewsFragmentViewModel
 import uz.azim.stocks.util.isNull
+import uz.azim.stocks.util.vmfactories.NewsFragmentViewModelFactory
 import java.text.SimpleDateFormat
 import java.util.*
 
 class NewsFragment : BaseFragment<FragmentNewsBinding>(R.layout.fragment_news) {
     private lateinit var symbol: String
-    private val companyRepo = RepositoryModule.bindCompanyRepo()
+    private val newsFragmentViewModel by viewModels<NewsFragmentViewModel> {
+        NewsFragmentViewModelFactory()
+    }
     private val newsAdapter: NewsAdapter = NewsAdapter()
 
     override fun initViewBinding(view: View) = FragmentNewsBinding.bind(view)
@@ -71,7 +76,7 @@ class NewsFragment : BaseFragment<FragmentNewsBinding>(R.layout.fragment_news) {
         showLoading()
 
         lifecycleScope.launchWhenStarted {
-            companyRepo.companyNews(
+            newsFragmentViewModel.companyNews(
                 symbol,
                 dateFormat.format(fromDate),
                 dateFormat.format(currentDate),

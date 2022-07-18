@@ -5,6 +5,7 @@ import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import androidx.core.view.isVisible
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.Dispatchers
@@ -21,12 +22,16 @@ import uz.azim.stocks.ui.fragment.BaseFragment
 import uz.azim.stocks.ui.fragment.favourites.adapter.FavoritesAdapter
 import uz.azim.stocks.ui.fragment.main.MainFragmentDirections
 import uz.azim.stocks.ui.fragment.stocks.listener.OnStockClickListener
+import uz.azim.stocks.ui.vm.FavouritesFragmentViewModel
 import uz.azim.stocks.util.getDrawable
 import uz.azim.stocks.util.navigate
+import uz.azim.stocks.util.vmfactories.FavouritesFragmentViewModelFactory
 
 class FavouritesFragment : BaseFragment<FragmentStocksBinding>(R.layout.fragment_stocks) {
 
-    private val stocksRepository: StocksRepository = RepositoryModule.bindStockRepo()
+    private val favouritesFragmentViewModel by viewModels<FavouritesFragmentViewModel> {
+        FavouritesFragmentViewModelFactory()
+    }
     private val favoritesAdapter: FavoritesAdapter = FavoritesAdapter()
 
     override fun initViewBinding(view: View) = FragmentStocksBinding.bind(view)
@@ -62,7 +67,7 @@ class FavouritesFragment : BaseFragment<FragmentStocksBinding>(R.layout.fragment
             RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
     }
 
-    fun getFavorites() = stocksRepository.getAllFavs()
+    private fun getFavorites() = favouritesFragmentViewModel.getFavouritesFlow()
 
     private fun setUpListeners() {
         binding.apply {
@@ -88,7 +93,7 @@ class FavouritesFragment : BaseFragment<FragmentStocksBinding>(R.layout.fragment
             override fun onFavoriteClick(quote: Quote, imgFav: ImageView) {
                 imgFav.setImageDrawable(imgUnFav)
                 lifecycleScope.launchWhenStarted {
-                    stocksRepository.deleteStock(quote)
+                    favouritesFragmentViewModel.deleteStock(quote)
                 }
             }
 
