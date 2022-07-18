@@ -25,10 +25,13 @@ import uz.azim.stocks.ui.fragment.stocks.listener.OnStockClickListener
 import uz.azim.stocks.ui.vm.FavouritesFragmentViewModel
 import uz.azim.stocks.util.getDrawable
 import uz.azim.stocks.util.navigate
+import uz.azim.stocks.util.vmfactories.FavouritesFragmentViewModelFactory
 
 class FavouritesFragment : BaseFragment<FragmentStocksBinding>(R.layout.fragment_stocks) {
 
-    private val favouritesFragmentViewModel by viewModels<FavouritesFragmentViewModel>()
+    private val favouritesFragmentViewModel by viewModels<FavouritesFragmentViewModel> {
+        FavouritesFragmentViewModelFactory()
+    }
     private val favoritesAdapter: FavoritesAdapter = FavoritesAdapter()
 
     override fun initViewBinding(view: View) = FragmentStocksBinding.bind(view)
