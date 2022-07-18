@@ -25,9 +25,10 @@ import uz.azim.stocks.util.Resource
 import uz.azim.stocks.util.getColor
 import uz.azim.stocks.util.getDrawable
 import uz.azim.stocks.util.log
+import uz.azim.stocks.util.vmfactories.ChartFragmentViewModelFactory
 
 class ChartFragment : BaseFragment<FragmentChartBinding>(R.layout.fragment_chart) {
-    private val chartFragmentViewModel by viewModels<ChartFragmentViewModel>()
+    private val chartFragmentViewModel by viewModels<ChartFragmentViewModel> { ChartFragmentViewModelFactory() }
 
     private var formatter: ValueFormatter? = null
     private var symbol: String = ""
