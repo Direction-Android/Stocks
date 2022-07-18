@@ -4,25 +4,29 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.view.animation.AnimationUtils
-import android.widget.Toast
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.view.isVisible
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import uz.azim.stocks.R
 import uz.azim.stocks.databinding.FragmentNewsBinding
-import uz.azim.stocks.di.RepositoryModule
 import uz.azim.stocks.ui.fragment.BaseFragment
 import uz.azim.stocks.ui.fragment.news.adapter.NewsAdapter
+import uz.azim.stocks.ui.fragment.news.vm.NewsVM
 import uz.azim.stocks.ui.fragment.quote.SYMBOL
 import uz.azim.stocks.util.isNull
+import uz.azim.stocks.util.loading.Loading
+import uz.azim.stocks.util.viewModelFactrory.NewsViewModelFactory
 import java.text.SimpleDateFormat
 import java.util.*
 
 class NewsFragment : BaseFragment<FragmentNewsBinding>(R.layout.fragment_news) {
+
     private lateinit var symbol: String
-    private val companyRepo = RepositoryModule.bindCompanyRepo()
+    private val newsVM by viewModels<NewsVM>{NewsViewModelFactory()}
+    private val loadingUtil = Loading()
     private val newsAdapter: NewsAdapter = NewsAdapter()
 
     override fun initViewBinding(view: View) = FragmentNewsBinding.bind(view)
@@ -68,44 +72,22 @@ class NewsFragment : BaseFragment<FragmentNewsBinding>(R.layout.fragment_news) {
         calendar.time = currentDate
         calendar.add(Calendar.DAY_OF_YEAR, -NEWS_FILTER.WEEK)
         val fromDate = calendar.time
-        showLoading()
+        loadingUtil.showLoading(binding.progress, binding.rvNews)
 
         lifecycleScope.launchWhenStarted {
-            companyRepo.companyNews(
+            newsVM.companyNews(
                 symbol,
                 dateFormat.format(fromDate),
                 dateFormat.format(currentDate),
             )
                 .catch {
-                    hideLoading()
-                    showError()
+                    loadingUtil.hideLoading(binding.progress, binding.rvNews)
+                    loadingUtil.showError(binding.progress, binding.rvNews, binding.btnRetry)
                 }
                 .collect {
-                    hideLoading()
+                    loadingUtil.hideLoading(binding.progress, binding.rvNews)
                     newsAdapter.submitList(it.data)
                 }
-        }
-    }
-
-    private fun showError() {
-        binding.apply {
-            progress.isVisible = false
-            rvNews.isVisible = false
-            btnRetry.isVisible = true
-        }
-    }
-
-    private fun showLoading() {
-        binding.apply {
-            progress.isVisible = true
-            rvNews.isVisible = false
-        }
-    }
-
-    private fun hideLoading() {
-        binding.apply {
-            progress.isVisible = false
-            rvNews.isVisible = true
         }
     }
 }

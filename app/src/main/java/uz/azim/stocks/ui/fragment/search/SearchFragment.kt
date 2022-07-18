@@ -2,7 +2,7 @@ package uz.azim.stocks.ui.fragment.search
 
 import android.os.Bundle
 import android.view.View
-import androidx.core.view.isVisible
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
@@ -10,17 +10,19 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onStart
 import uz.azim.stocks.R
-import uz.azim.stocks.data.repo.stock.StocksRepository
 import uz.azim.stocks.databinding.FragmentSearchBinding
-import uz.azim.stocks.di.RepositoryModule
 import uz.azim.stocks.ui.fragment.BaseFragment
 import uz.azim.stocks.ui.fragment.search.adapter.SearchAdapter
+import uz.azim.stocks.ui.fragment.search.vm.SearchVM
 import uz.azim.stocks.util.hideKeyboard
+import uz.azim.stocks.util.loading.Loading
 import uz.azim.stocks.util.navigate
+import uz.azim.stocks.util.viewModelFactrory.SearchViewModelFactory
 
 class SearchFragment : BaseFragment<FragmentSearchBinding>(R.layout.fragment_search) {
 
-    private val stocksRepository: StocksRepository = RepositoryModule.bindStockRepo()
+    private val searchVM by viewModels<SearchVM> { SearchViewModelFactory() }
+    private val loadingUtil = Loading()
 
     private val searchAdapter: SearchAdapter = SearchAdapter()
     private val searchText = "text"
@@ -65,11 +67,11 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(R.layout.fragment_sea
 
     private fun searchForStock(query: String) {
         lifecycleScope.launchWhenStarted {
-            stocksRepository.searchStock(query)
-                .onStart { showProgress() }
-                .catch { hideProgress() }
+            searchVM.getSearchResult(query)
+                .onStart { loadingUtil.showLoading(binding.progress, binding.rvSearch) }
+                .catch { loadingUtil.hideLoading(binding.progress, binding.rvSearch) }
                 .collect {
-                    hideProgress()
+                    loadingUtil.hideLoading(binding.progress, binding.rvSearch)
                     it.data?.let { list ->
                         searchAdapter.submitList(list)
                     }
@@ -77,19 +79,6 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(R.layout.fragment_sea
         }
     }
 
-    private fun hideProgress() {
-        binding.apply {
-            progress.isVisible = false
-            rvSearch.isVisible = true
-        }
-    }
-
-    private fun showProgress() {
-        binding.apply {
-            progress.isVisible = true
-            rvSearch.isVisible = false
-        }
-    }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)

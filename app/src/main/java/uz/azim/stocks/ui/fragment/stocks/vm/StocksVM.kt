@@ -11,13 +11,15 @@ import kotlinx.coroutines.launch
 import okhttp3.WebSocket
 import uz.azim.stocks.data.repo.stock.StocksRepository
 import uz.azim.stocks.di.RepositoryModule
+
 import uz.azim.stocks.model.Quote
 import uz.azim.stocks.model.StockUpdate
 import uz.azim.stocks.ui.BaseViewModel
 import uz.azim.stocks.util.Resource
 import uz.azim.stocks.util.log
 
-class StocksVM : BaseViewModel() {
+class StocksVM(
+) : BaseViewModel() {
     private val stocksRepository: StocksRepository = RepositoryModule.bindStockRepo()
 
     private val _quotes = MutableStateFlow<Resource<PagingData<Quote>>>(Resource.InitialState())
@@ -27,7 +29,7 @@ class StocksVM : BaseViewModel() {
         getStocks()
     }
 
-    fun getStocks() = viewModelScope.launch(exceptionHandler) {
+    private fun getStocks() = viewModelScope.launch(exceptionHandler) {
         stocksRepository.getStocks()
             .cachedIn(viewModelScope)
             .collectLatest {
