@@ -5,28 +5,29 @@ import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import androidx.core.view.isVisible
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.withContext
 import uz.azim.stocks.R
-import uz.azim.stocks.data.repo.stock.StocksRepository
 import uz.azim.stocks.databinding.FragmentStocksBinding
-import uz.azim.stocks.di.RepositoryModule
 import uz.azim.stocks.model.Quote
 import uz.azim.stocks.ui.fragment.BaseFragment
 import uz.azim.stocks.ui.fragment.favourites.adapter.FavoritesAdapter
+import uz.azim.stocks.ui.fragment.favourites.vm.FavoriteVM
 import uz.azim.stocks.ui.fragment.main.MainFragmentDirections
 import uz.azim.stocks.ui.fragment.stocks.listener.OnStockClickListener
 import uz.azim.stocks.util.getDrawable
+import uz.azim.stocks.util.loading.Loading
 import uz.azim.stocks.util.navigate
+import uz.azim.stocks.util.viewModelFactrory.FavoriteViewModelFactory
 
 class FavouritesFragment : BaseFragment<FragmentStocksBinding>(R.layout.fragment_stocks) {
 
-    private val stocksRepository: StocksRepository = RepositoryModule.bindStockRepo()
+    private val favoritesVM by viewModels<FavoriteVM> { FavoriteViewModelFactory() }
+    private var loadingUtil = Loading()
     private val favoritesAdapter: FavoritesAdapter = FavoritesAdapter()
 
     override fun initViewBinding(view: View) = FragmentStocksBinding.bind(view)
@@ -38,14 +39,14 @@ class FavouritesFragment : BaseFragment<FragmentStocksBinding>(R.layout.fragment
         lifecycleScope.launchWhenStarted {
             getFavorites()
                 .onStart {
-                    showLoading()
+                    loadingUtil.showLoading(binding.progress, binding.retryBtn)
                 }
                 .catch {
                     binding.retryBtn.isVisible = true
                     binding.progress.isVisible = false
                 }
                 .collect { list ->
-                    hideLoading()
+                    loadingUtil.hideLoading(binding.progress, binding.retryBtn)
                     favoritesAdapter.submitList(list)
                 }
         }
@@ -62,7 +63,7 @@ class FavouritesFragment : BaseFragment<FragmentStocksBinding>(R.layout.fragment
             RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
     }
 
-    fun getFavorites() = stocksRepository.getAllFavs()
+    private fun getFavorites() = favoritesVM.getAllFaves()
 
     private fun setUpListeners() {
         binding.apply {
@@ -70,25 +71,25 @@ class FavouritesFragment : BaseFragment<FragmentStocksBinding>(R.layout.fragment
                 lifecycleScope.launchWhenStarted {
                     getFavorites()
                         .onStart {
-                            showLoading()
+                            loadingUtil.showLoading(progress, retryBtn)
                         }
                         .catch {
-                            binding.retryBtn.isVisible = true
-                            binding.progress.isVisible = false
+                            loadingUtil.notShowLoading(progress, retryBtn)
                         }
                         .collect { list ->
-                            hideLoading()
+                            loadingUtil.hideLoading(progress, retryBtn)
                             favoritesAdapter.submitList(list)
                         }
                 }
             }
         }
+
         val imgUnFav = getDrawable(requireContext(), R.drawable.ic_star_inactive)
         favoritesAdapter.onStockClickListener(object : OnStockClickListener {
             override fun onFavoriteClick(quote: Quote, imgFav: ImageView) {
                 imgFav.setImageDrawable(imgUnFav)
                 lifecycleScope.launchWhenStarted {
-                    stocksRepository.deleteStock(quote)
+                    favoritesVM.deleteStock(quote)
                 }
             }
 
@@ -97,20 +98,6 @@ class FavouritesFragment : BaseFragment<FragmentStocksBinding>(R.layout.fragment
                 navigate(R.id.mainFragment, action)
             }
         })
-    }
-
-    private suspend fun showLoading() {
-        withContext(Dispatchers.Main) {
-            binding.retryBtn.isVisible = false
-            binding.progress.isVisible = true
-        }
-    }
-
-    private suspend fun hideLoading() {
-        withContext(Dispatchers.Main) {
-            binding.retryBtn.isVisible = false
-            binding.progress.isVisible = false
-        }
     }
 
     override fun beforeDestroyBinding() {

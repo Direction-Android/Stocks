@@ -8,7 +8,7 @@ import uz.azim.stocks.util.Resource
 
 interface StocksRepository {
 
-    suspend fun getStocks(listType: String = "most_actives"): Flow<PagingData<Quote>>
+   suspend fun getStocks(listType: String = "most_actives"): Flow<PagingData<Quote>>
 
     suspend fun saveStock(quote: Quote)
 
@@ -16,5 +16,5 @@ interface StocksRepository {
 
     fun getAllFavs(): Flow<List<Quote>>
 
-    fun searchStock(query:String):Flow<Resource<List<SearchResult>>>
+    fun searchStock(query: String): Flow<Resource<List<SearchResult>>>
 }
