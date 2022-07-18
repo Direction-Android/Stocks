@@ -19,10 +19,13 @@ import uz.azim.stocks.ui.fragment.search.adapter.SearchAdapter
 import uz.azim.stocks.ui.vm.SearchFragmentViewModel
 import uz.azim.stocks.util.hideKeyboard
 import uz.azim.stocks.util.navigate
+import uz.azim.stocks.util.vmfactories.SearchFragmentViewModelFactory
 
 class SearchFragment : BaseFragment<FragmentSearchBinding>(R.layout.fragment_search) {
 
-    private val searchFragmentViewModel by viewModels<SearchFragmentViewModel>()
+    private val searchFragmentViewModel by viewModels<SearchFragmentViewModel> {
+        SearchFragmentViewModelFactory()
+    }
 
     private val searchAdapter: SearchAdapter = SearchAdapter()
     private val searchText = "text"
